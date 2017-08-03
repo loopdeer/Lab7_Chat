@@ -7,6 +7,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Observable;
 import java.util.Scanner;
@@ -15,8 +18,10 @@ public class ChatServer extends Observable {
 	//public int serverPublic = 7;
 	//TODO make sure this can not be a userName
 	public static final String SERVERNAME = "*SERVER*";
+	public static final String ALLNAME = "*ALL*";
 	private int serverPrivate = 17;
 	private ArrayList<String> users = new ArrayList<String>();
+	private HashMap<String, Integer> secrets = new HashMap<String, Integer>();
 	public static void main(String[] args) {
 		try {
 			new ChatServer().setUpNetworking();
@@ -62,10 +67,46 @@ public class ChatServer extends Observable {
 				e.printStackTrace();
 			}
 			
-			if(id != null && !id.equals(""))
+			if(id != null && !id.equals("") && id.contains(ChatClient.COMMANDSTART + " initializeID "))
+			{
 				finished = true;
+			}
+				
 		}
-		return id;
+		return id.substring(16);
+	}
+	
+	private int getInteger(Socket clientSocket)
+	{
+		// TODO Auto-generated method stub
+				BufferedReader reader = null;
+				try{
+					reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+				}
+				catch(IOException e)
+				{
+					e.printStackTrace();
+				}
+				
+				String id = "";
+				
+				boolean finished = false;
+				while(!finished)
+				{
+					try {
+						id = reader.readLine();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					if(id != null && !id.equals("") && id.contains(ChatClient.COMMANDSTART + " initializeInt "))
+					{
+						finished = true;
+					}
+						
+				}
+				return Integer.parseInt(id.substring(17));
 	}
 	
 	
@@ -96,7 +137,7 @@ public class ChatServer extends Observable {
 					if(!checkForCommand(message))
 					{
 						setChanged();
-						notifyObservers(userID + ": " + message);
+						notifyObservers(userID + " " + message);
 					}
 				}
 			}
@@ -122,7 +163,7 @@ public class ChatServer extends Observable {
 				{
 				case "startconv" : //stuff
 					//TODO delete/inspect this later
-					String specialMessage = SERVERNAME;
+					String specialMessage = "";
 					/*
 					while(commandChecker.hasNext())
 					{
@@ -130,11 +171,30 @@ public class ChatServer extends Observable {
 						special += " ";
 					}
 					System.out.println(userID + " wants to start a conversation with these person(s): " + special);*/
-					//ArrayList<String> users = new ArrayList<String>();
+					ArrayList<String> users = new ArrayList<String>();
 					while(commandChecker.hasNext())
 					{
-						specialMessage = specialMessage + " " + commandChecker.next() + " notify New_Group_Message_Request \n";
+						users.add(commandChecker.next());
 					}
+					
+					//generate a unique ID
+					/*int base = 3;
+					for(String u : users)
+					{
+						specialMessage = specialMessage + " " + u + " requestInteger \n";
+					}*/
+					
+					users.add(userID);
+					Collections.sort(users);
+					String groupIdent = users.toString();
+					groupIdent = groupIdent.replace("[", "");
+					groupIdent = groupIdent.replaceAll(" ", "");
+					groupIdent = groupIdent.replace("]", "");
+					for(String u : users)
+					{
+						specialMessage = specialMessage + SERVERNAME + " " + u + " notifyNewGroup " + groupIdent + "\n";
+					}
+					
 					setChanged();
 					notifyObservers(specialMessage);
 					

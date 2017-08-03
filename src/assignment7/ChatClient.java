@@ -32,6 +32,7 @@ public class ChatClient extends Application {
 	private String userID;
 	public static final String COMMANDSTART = "*/";
 	
+	private String groupIdentity;
 	public int universalPublic = 3;
 	public int personalPublic =(int) (Math.random() * 100 + 1);
 	private int personalPrivate = (int) (Math.random() * 100 + 1);
@@ -52,7 +53,7 @@ public class ChatClient extends Application {
 		//delete this later/replace with UI
 		Scanner scan = new Scanner(System.in);
 		userID = scan.next();
-		writer.println(userID);
+		writer.println(COMMANDSTART + " initializeID " + userID);
 		writer.flush();
 		System.out.println("networking established");
 		Thread readerThread = new Thread(new IncomingReader());
@@ -78,8 +79,9 @@ public class ChatClient extends Application {
 						/*Scanner scan = new Scanner(message);
 						String userID = scan.next();
 						userID = userID.substring(0, userID.length() - 1);*/
-						if(!checkSender(message))
-							cc.getTA().appendText(message + "\n");
+						/*if(!checkSender(message))
+							cc.getTA().appendText(message + "\n");*/
+					checkSender(message);
 						
 				}
 			} catch (IOException ex) {
@@ -87,27 +89,48 @@ public class ChatClient extends Application {
 			}
 		}
 		
-		private boolean checkSender(String m)
+		private void checkSender(String m)
 		{
+			//messages are formatted as such: <sender> <recipients> <messages/command>
 			//server messages/commands come in the format: <server designated specialID> <user> <command> ...
 			Scanner commandChecker = new Scanner(m);
 			if(commandChecker.hasNext())
 			{
-				if(commandChecker.next().equals(ChatServer.SERVERNAME))
+				String sender = commandChecker.next();
+				String recipient = commandChecker.next();
+				if(sender.equals(ChatServer.SERVERNAME))
 				{
-					if(commandChecker.next().equals(userID))
+					if(recipient.equals(userID))
 					{
 						switch(commandChecker.next())
 						{
-						case "notify" : cc.getTA().appendText("You are wanted in a group chat " + "\n");
+						case "notifyNewGroup" : 
+							groupIdentity = commandChecker.nextLine();
+							groupIdentity = groupIdentity.replaceAll(" ", "");
+							cc.getTA().appendText("New conversation group request for: " + groupIdentity + "\n");
+							cc.setGroup(groupIdentity);
 							break;
 						default : cc.getTA().appendText("The server wanted to tell you something...but it screwed up." + "\n");
 						}
 					}
-					return true;
+					return;
+				}
+				if(cc.currentlyPrivate())
+				{
+					if(groupIdentity != null && recipient.contains(groupIdentity))
+					{
+						cc.getTA().appendText(sender + ":" + commandChecker.nextLine() + "\n");
+					}
+				}
+				else
+				{
+					if(recipient.equals(ChatServer.ALLNAME))
+					{
+						cc.getTA().appendText(sender + ":" + commandChecker.nextLine() + "\n");
+					}
 				}
 			}
-			return false;
+			
 		}
 	}
 
