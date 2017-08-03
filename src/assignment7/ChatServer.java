@@ -5,10 +5,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Observable;
+import java.util.Scanner;
 
 public class ChatServer extends Observable {
+	//public int serverPublic = 7;
+	//TODO make sure this can not be a userName
+	public static final String SERVERNAME = "*SERVER*";
+	private int serverPrivate = 17;
 	private ArrayList<String> users = new ArrayList<String>();
 	public static void main(String[] args) {
 		try {
@@ -60,16 +67,23 @@ public class ChatServer extends Observable {
 		}
 		return id;
 	}
+	
+	
 	class ClientHandler implements Runnable {
 		private BufferedReader reader;
 		private String userID;
 
 		public ClientHandler(Socket clientSocket, String id) {
-			Socket sock = clientSocket;
 			userID = id;
 			try {
+				Socket sock = clientSocket;
 				reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-			} catch (IOException e) {
+			}
+			catch(SocketException dc)
+			{
+				System.out.println(userID + " has disconnected.");
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -79,12 +93,58 @@ public class ChatServer extends Observable {
 			try {
 				while ((message = reader.readLine()) != null) {
 					System.out.println("server read "+ message + " from " + userID);
-					setChanged();
-					notifyObservers(userID + ": " + message);
+					if(!checkForCommand(message))
+					{
+						setChanged();
+						notifyObservers(userID + ": " + message);
+					}
 				}
-			} catch (IOException e) {
+			}
+			catch(SocketException dc)
+			{
+				System.out.println(userID + " has disconnected.");
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 			}
+			
+		}
+		
+		private boolean checkForCommand(String m)
+		{
+			Scanner commandChecker = new Scanner(m);
+			if(commandChecker.next().equals(ChatClient.COMMANDSTART))
+			{
+				String command = commandChecker.next();
+				System.out.println("The server has read the following command: " + command + " from " + userID);
+				
+				switch(command)
+				{
+				case "startconv" : //stuff
+					//TODO delete/inspect this later
+					String specialMessage = SERVERNAME;
+					/*
+					while(commandChecker.hasNext())
+					{
+						special += commandChecker.next();
+						special += " ";
+					}
+					System.out.println(userID + " wants to start a conversation with these person(s): " + special);*/
+					//ArrayList<String> users = new ArrayList<String>();
+					while(commandChecker.hasNext())
+					{
+						specialMessage = specialMessage + " " + commandChecker.next() + " notify New_Group_Message_Request \n";
+					}
+					setChanged();
+					notifyObservers(specialMessage);
+					
+					break;
+				default: System.out.println("invalid command");
+				}
+				return true;
+			}
+			
+			return false;
 		}
 	}
 }

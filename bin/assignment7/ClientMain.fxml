@@ -7,7 +7,7 @@
 
 <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
   <tabs>
-    <Tab text="Single">
+    <Tab onSelectionChanged="#allSelected" text="All">
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
@@ -17,15 +17,24 @@
                      </content>
                   </ScrollPane>
                   <TextField fx:id="messageBox" layoutY="361.0" prefHeight="31.0" prefWidth="496.0" AnchorPane.rightAnchor="104.0" />
-                  <TextField fx:id="addressBox" layoutY="392.0" prefHeight="31.0" prefWidth="495.0" />
                   <Button fx:id="sendButton" layoutX="496.0" layoutY="361.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="31.0" prefWidth="106.0" text="Send" />
-                  <Button fx:id="addressButton" layoutX="495.0" layoutY="392.0" mnemonicParsing="false" onAction="#talkTo" prefHeight="31.0" prefWidth="106.0" text="To" />
                </children></AnchorPane>
       </content>
     </Tab>
-    <Tab text="Untitled Tab 2">
+    <Tab onSelectionChanged="#groupSelected" text="Private/Group">
       <content>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <ScrollPane prefHeight="358.0" prefWidth="600.0">
+                     <content>
+                        <TextArea fx:id="viewAreaGroup" prefHeight="357.0" prefWidth="598.0" />
+                     </content>
+                  </ScrollPane>
+                  <Button fx:id="addressButton" layoutX="487.0" layoutY="395.0" mnemonicParsing="false" onAction="#talkTo" prefHeight="31.0" prefWidth="116.0" text="To" />
+                  <TextField fx:id="addressBox" layoutY="395.0" prefHeight="31.0" prefWidth="495.0" />
+                  <TextField fx:id="groupTextField" layoutY="358.0" prefHeight="31.0" prefWidth="495.0" />
+                  <Button fx:id="groupSendButtton" layoutX="495.0" layoutY="358.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="31.0" prefWidth="105.0" text="Send (Group)" />
+               </children></AnchorPane>
       </content>
     </Tab>
   </tabs>

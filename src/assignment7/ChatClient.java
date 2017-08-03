@@ -2,6 +2,7 @@ package assignment7;
 
 import java.io.*;
 import java.net.*;
+import java.util.HashSet;
 import java.util.Scanner;
 
 import javax.swing.*;
@@ -28,10 +29,13 @@ public class ChatClient extends Application {
 	private BufferedReader reader;
 	private static PrintWriter writer;
 	private static ClientMainController cc;
-	private int id = (int) (Math.random() * 1000 + 1);
+	private String userID;
+	public static final String COMMANDSTART = "*/";
+	
 	public int universalPublic = 3;
 	public int personalPublic =(int) (Math.random() * 100 + 1);
 	private int personalPrivate = (int) (Math.random() * 100 + 1);
+	
 	private TabPane rootLayout;
 	
 	public void run() throws Exception {
@@ -47,7 +51,8 @@ public class ChatClient extends Application {
 		
 		//delete this later/replace with UI
 		Scanner scan = new Scanner(System.in);
-		writer.println(scan.next());
+		userID = scan.next();
+		writer.println(userID);
 		writer.flush();
 		System.out.println("networking established");
 		Thread readerThread = new Thread(new IncomingReader());
@@ -70,26 +75,45 @@ public class ChatClient extends Application {
 			String message;
 			try {
 				while ((message = reader.readLine()) != null) {
-					
-						cc.getTA().appendText(message + "\n");
+						/*Scanner scan = new Scanner(message);
+						String userID = scan.next();
+						userID = userID.substring(0, userID.length() - 1);*/
+						if(!checkSender(message))
+							cc.getTA().appendText(message + "\n");
+						
 				}
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
+		}
+		
+		private boolean checkSender(String m)
+		{
+			//server messages/commands come in the format: <server designated specialID> <user> <command> ...
+			Scanner commandChecker = new Scanner(m);
+			if(commandChecker.hasNext())
+			{
+				if(commandChecker.next().equals(ChatServer.SERVERNAME))
+				{
+					if(commandChecker.next().equals(userID))
+					{
+						switch(commandChecker.next())
+						{
+						case "notify" : cc.getTA().appendText("You are wanted in a group chat " + "\n");
+							break;
+						default : cc.getTA().appendText("The server wanted to tell you something...but it screwed up." + "\n");
+						}
+					}
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		// TODO Auto-generated method stub
-		/*TabPane tp = new TabPane();
-		Tab single = new Tab();
-		incoming = new TextArea();
-		incoming.setEditable(false);
-		incoming.setWrapText(true);
-		ScrollPane sp = new ScrollPane(incoming);
-		outgoing = new TextField();
-		Button but = new Button("Send");*/
 		try {
             // Load root layout from fxml file.
             FXMLLoader loader = new FXMLLoader();
