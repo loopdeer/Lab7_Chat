@@ -20,7 +20,7 @@ public class ChatServer extends Observable {
 	public static final String SERVERNAME = "*SERVER*";
 	public static final String ALLNAME = "*ALL*";
 	private int serverPrivate = 17;
-	private ArrayList<String> users = new ArrayList<String>();
+	//private ArrayList<String> users = new ArrayList<String>();
 	private HashMap<String, Integer> secrets = new HashMap<String, Integer>();
 	public static void main(String[] args) {
 		try {
@@ -36,7 +36,7 @@ public class ChatServer extends Observable {
 		while (true) {
 			Socket clientSocket = serverSock.accept();
 			String userName = getUserName(clientSocket);
-			users.add(userName);
+			//users.add(userName);
 			ClientObserver writer = new ClientObserver(clientSocket.getOutputStream());
 			Thread t = new Thread(new ClientHandler(clientSocket, userName));
 			t.start();

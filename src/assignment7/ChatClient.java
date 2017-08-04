@@ -32,7 +32,7 @@ public class ChatClient extends Application {
 	private String userID;
 	public static final String COMMANDSTART = "*/";
 	
-	private String groupIdentity;
+	//private String groupIdentity;
 	public int universalPublic = 3;
 	public int personalPublic =(int) (Math.random() * 100 + 1);
 	private int personalPrivate = (int) (Math.random() * 100 + 1);
@@ -105,7 +105,7 @@ public class ChatClient extends Application {
 						switch(commandChecker.next())
 						{
 						case "notifyNewGroup" : 
-							groupIdentity = commandChecker.nextLine();
+							String groupIdentity = commandChecker.nextLine();
 							groupIdentity = groupIdentity.replaceAll(" ", "");
 							cc.getTA().appendText("New conversation group request for: " + groupIdentity + "\n");
 							cc.setGroup(groupIdentity);
@@ -115,19 +115,9 @@ public class ChatClient extends Application {
 					}
 					return;
 				}
-				if(cc.currentlyPrivate())
-				{
-					if(groupIdentity != null && recipient.contains(groupIdentity))
-					{
-						cc.getTA().appendText(sender + ":" + commandChecker.nextLine() + "\n");
-					}
-				}
 				else
 				{
-					if(recipient.equals(ChatServer.ALLNAME))
-					{
-						cc.getTA().appendText(sender + ":" + commandChecker.nextLine() + "\n");
-					}
+					cc.handleMessage(sender, recipient, commandChecker.nextLine());
 				}
 			}
 			
