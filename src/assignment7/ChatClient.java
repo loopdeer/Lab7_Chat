@@ -8,6 +8,7 @@ import java.util.Scanner;
 import javax.swing.*;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +19,8 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 
@@ -30,6 +33,7 @@ public class ChatClient extends Application {
 	private static PrintWriter writer;
 	private static ClientMainController cc;
 	private String userID;
+	private LoginScreenController lsc;
 	public static final String COMMANDSTART = "*/";
 	
 	//private String groupIdentity;
@@ -39,11 +43,12 @@ public class ChatClient extends Application {
 	
 	private TabPane rootLayout;
 	
-	public void run() throws Exception {
-		setUpNetworking();
+	public PrintWriter run(String user) throws Exception {
+		return setUpNetworking(user);
+		
 	}
 
-	private void setUpNetworking() throws Exception {
+	private PrintWriter setUpNetworking(String user) throws Exception {
 		@SuppressWarnings("resource")
 		Socket sock = new Socket("127.0.0.1", 4242);
 		InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
@@ -51,21 +56,43 @@ public class ChatClient extends Application {
 		writer = new PrintWriter(sock.getOutputStream());
 		
 		//delete this later/replace with UI
-		Scanner scan = new Scanner(System.in);
-		userID = scan.next();
+		/*FXMLLoader ldr = new FXMLLoader();
+        ldr.setLocation(ClientMain.class.getResource("LoginScreen.fxml"));
+        LoginScreenController lsc = new LoginScreenController();
+        ldr.setController(lsc);
+        TitledPane tp = (TitledPane) ldr.load();
+        Scene login = new Scene(tp);
+        Platform.runLater(new Runnable() {
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				Stage stage = new Stage();
+				stage.setScene(login);
+				stage.show();
+			}
+        	
+        });*/
+		//primaryStage.setScene(login);
+		//Scanner scan = new Scanner(System.in);
+		//userID = scan.next();
+		userID = user;
+        
 		writer.println(COMMANDSTART + " initializeID " + userID);
+		//System.out.println(writer);
 		writer.flush();
 		System.out.println("networking established");
 		Thread readerThread = new Thread(new IncomingReader());
 		readerThread.start();
+		return writer;
 	}
 	
 	
 
 	public static void main(String[] args) {
-		ChatClient test = new ChatClient();
+		//ChatClient test = new ChatClient();
 		try {
-			test.run();
+			//test.run();
 			launch();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -129,17 +156,26 @@ public class ChatClient extends Application {
 		// TODO Auto-generated method stub
 		try {
             // Load root layout from fxml file.
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(ClientMain.class.getResource("ClientMain.fxml"));
-            cc = new ClientMainController(writer);
-            incoming = cc.getTA();
-            loader.setController(cc);
-            rootLayout = (TabPane) loader.load();
-
+			
+			//FXMLLoader loader = new FXMLLoader();
+            //loader.setLocation(ClientMain.class.getResource("ClientMain.fxml"));
+            //cc = new ClientMainController(writer);
+            //incoming = cc.getTA();
+            //loader.setController(cc);
+            //rootLayout = (TabPane) loader.load();
             // Show the scene containing the root layout.
-            Scene scene = new Scene(rootLayout);
-            primaryStage.setScene(scene);
-            primaryStage.show();
+            //Scene scene = new Scene(rootLayout);
+			
+			
+			FXMLLoader ldr = new FXMLLoader();
+	        ldr.setLocation(LoginScreenController.class.getResource("LoginScreen.fxml"));
+	        lsc = new LoginScreenController(primaryStage, writer);
+	        ldr.setController(lsc);
+	        TitledPane tp = (TitledPane) ldr.load();
+	        Scene login = new Scene(tp);
+	        primaryStage.setScene(login);
+	        primaryStage.show();
+			
         } catch (IOException e) {
             e.printStackTrace();
         }
