@@ -20,7 +20,7 @@ public class ChatServer extends Observable {
 	public static final String SERVERNAME = "*SERVER*";
 	public static final String ALLNAME = "*ALL*";
 	private int serverPrivate = 17;
-	//private ArrayList<String> users = new ArrayList<String>();
+	private ArrayList<String> onlineUsers = new ArrayList<String>();
 	private HashMap<String, Integer> secrets = new HashMap<String, Integer>();
 	public static void main(String[] args) {
 		try {
@@ -36,7 +36,7 @@ public class ChatServer extends Observable {
 		while (true) {
 			Socket clientSocket = serverSock.accept();
 			String userName = getUserName(clientSocket);
-			//users.add(userName);
+			onlineUsers.add(userName);
 			ClientObserver writer = new ClientObserver(clientSocket.getOutputStream());
 			Thread t = new Thread(new ClientHandler(clientSocket, userName));
 			t.start();
@@ -164,25 +164,11 @@ public class ChatServer extends Observable {
 				case "startconv" : //stuff
 					//TODO delete/inspect this later
 					String specialMessage = "";
-					/*
-					while(commandChecker.hasNext())
-					{
-						special += commandChecker.next();
-						special += " ";
-					}
-					System.out.println(userID + " wants to start a conversation with these person(s): " + special);*/
 					ArrayList<String> users = new ArrayList<String>();
 					while(commandChecker.hasNext())
 					{
 						users.add(commandChecker.next());
 					}
-					
-					//generate a unique ID
-					/*int base = 3;
-					for(String u : users)
-					{
-						specialMessage = specialMessage + " " + u + " requestInteger \n";
-					}*/
 					
 					users.add(userID);
 					Collections.sort(users);
@@ -198,6 +184,17 @@ public class ChatServer extends Observable {
 					setChanged();
 					notifyObservers(specialMessage);
 					
+					break;
+				case "getOnlineUsers" :
+					Collections.sort(onlineUsers);
+					specialMessage = onlineUsers.toString();
+					specialMessage = specialMessage.replace("[", "");
+					specialMessage = specialMessage.replaceAll(",", "");
+					specialMessage = specialMessage.replace("]", "");
+					specialMessage = SERVERNAME + " " + ALLNAME + " onlineUsers " + specialMessage; 
+					
+					setChanged();
+					notifyObservers(specialMessage);
 					break;
 				default: System.out.println("invalid command");
 				}

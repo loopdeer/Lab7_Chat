@@ -31,6 +31,7 @@ public class ChatTabController {
 	@FXML
 	private Button addressButton1;
 	
+	
 	private ClientMainController cc;
 	private PrintWriter writer;
 	private String groupName;
@@ -39,6 +40,7 @@ public class ChatTabController {
 		cc = c;
 		writer = c.getWriter();
 		groupName = name;
+		//viewArea.setEditable(false);
 	}
 	// Event Listener on Tab[#startTab].onSelectionChanged
 	@FXML
@@ -81,8 +83,15 @@ public class ChatTabController {
 		writer.flush();
 	}
 	
+	
 	public TextArea getTA()
 	{
+		if(viewArea.isEditable())
+		{
+			viewArea.setEditable(false);
+		}
 		return viewArea;
 	}
+	
+	
 }

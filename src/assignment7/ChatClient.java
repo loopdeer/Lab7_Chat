@@ -100,7 +100,7 @@ public class ChatClient extends Application {
 				String recipient = commandChecker.next();
 				if(sender.equals(ChatServer.SERVERNAME))
 				{
-					if(recipient.equals(userID))
+					if(recipient.equals(userID) || recipient.equals(ChatServer.ALLNAME))
 					{
 						switch(commandChecker.next())
 						{
@@ -109,6 +109,10 @@ public class ChatClient extends Application {
 							groupIdentity = groupIdentity.replaceAll(" ", "");
 							cc.getTA().appendText("New conversation group request for: " + groupIdentity + "\n");
 							cc.setGroup(groupIdentity);
+							break;
+						case "onlineUsers" :
+							String ul = commandChecker.nextLine();
+							cc.updateOnlineTab(ul);
 							break;
 						default : cc.getTA().appendText("The server wanted to tell you something...but it screwed up." + "\n");
 						}
@@ -140,6 +144,7 @@ public class ChatClient extends Application {
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
             primaryStage.show();
+            cc.initalizeUserList();
         } catch (IOException e) {
             e.printStackTrace();
         }
