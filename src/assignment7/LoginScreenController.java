@@ -90,6 +90,8 @@ public class LoginScreenController {
 							rootLayout = (TabPane) loader.load();
 							Scene scene = new Scene(rootLayout);
 							st.setScene(scene);
+							cc.initalizeUserList();
+				            test.setCC(cc);
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();

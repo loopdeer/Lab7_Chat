@@ -39,7 +39,7 @@ public class ChatServer extends Observable {
 			String userName = getUserName(clientSocket);
 			onlineUsers.add(userName);
 			ClientObserver writer = new ClientObserver(clientSocket.getOutputStream());
-			Thread t = new Thread(new ClientHandler(clientSocket, userName));
+			Thread t = new Thread(new ClientHandler(clientSocket, userName, writer));
 			t.start();
 			this.addObserver(writer);
 			System.out.println("got a connection with " + userName);
@@ -110,20 +110,29 @@ public class ChatServer extends Observable {
 				return Integer.parseInt(id.substring(17));
 	}
 	
+	private void disconnect(String id, ClientObserver o)
+	{
+		System.out.println(id + " has disconnected.");
+		this.deleteObserver(o);
+		System.out.println("# of observers: " + this.countObservers());
+		
+	}
 	
 	class ClientHandler implements Runnable {
 		private BufferedReader reader;
 		private String userID;
+		private ClientObserver obv;
 
-		public ClientHandler(Socket clientSocket, String id) {
+		public ClientHandler(Socket clientSocket, String id, ClientObserver ob) {
 			userID = id;
+			obv = ob;
 			try {
 				Socket sock = clientSocket;
 				reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 			}
 			catch(SocketException dc)
 			{
-				System.out.println(userID + " has disconnected.");
+				disconnect(userID, obv);
 			}
 			catch (IOException e) {
 				e.printStackTrace();
@@ -144,7 +153,7 @@ public class ChatServer extends Observable {
 			}
 			catch(SocketException dc)
 			{
-				System.out.println(userID + " has disconnected.");
+				disconnect(userID, obv);
 			}
 			catch (IOException e) {
 				e.printStackTrace();
@@ -204,5 +213,7 @@ public class ChatServer extends Observable {
 			
 			return false;
 		}
+		
+		
 	}
 }

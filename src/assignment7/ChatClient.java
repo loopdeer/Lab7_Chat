@@ -159,18 +159,6 @@ public class ChatClient extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		// TODO Auto-generated method stub
 		try {
-            // Load root layout from fxml file.
-			
-			//FXMLLoader loader = new FXMLLoader();
-            //loader.setLocation(ClientMain.class.getResource("ClientMain.fxml"));
-            //cc = new ClientMainController(writer);
-            //incoming = cc.getTA();
-            //loader.setController(cc);
-            //rootLayout = (TabPane) loader.load();
-            // Show the scene containing the root layout.
-            //Scene scene = new Scene(rootLayout);
-			
-			
 			FXMLLoader ldr = new FXMLLoader();
 	        ldr.setLocation(LoginScreenController.class.getResource("LoginScreen.fxml"));
 	        lsc = new LoginScreenController(primaryStage, writer);
@@ -179,11 +167,14 @@ public class ChatClient extends Application {
 	        Scene login = new Scene(tp);
 	        primaryStage.setScene(login);
 	        primaryStage.show();
-			
-            cc.initalizeUserList();
         } catch (IOException e) {
             e.printStackTrace();
         }
 		//setUpNetworking();
+	}
+	
+	public void setCC(ClientMainController c)
+	{
+		cc = c;
 	}
 }
