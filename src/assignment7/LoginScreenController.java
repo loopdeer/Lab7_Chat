@@ -71,6 +71,8 @@ public class LoginScreenController {
 			ChatClient test = new ChatClient();
 			try {
 				writer = test.run(un);
+				if(writer != null)
+				{
 				//System.out.println(writer);
 				FXMLLoader loader = new FXMLLoader();
 	            loader.setLocation(ClientMain.class.getResource("ClientMain.fxml"));
@@ -100,6 +102,7 @@ public class LoginScreenController {
 					}
 	            	
 	            });
+				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -110,4 +113,32 @@ public class LoginScreenController {
 		return un;
 	}
 	
+	public void userTaken()
+	{
+		Platform.runLater(new Runnable(){
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				Stage primaryStage = new Stage();
+				FXMLLoader ldr = new FXMLLoader();
+		        ldr.setLocation(LoginScreenController.class.getResource("Error.fxml"));
+		        ldr.setController(new ErrorController(primaryStage));
+				Scene login;
+				try {
+					login = new Scene(ldr.load());
+					primaryStage.setScene(login);
+			        primaryStage.show();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        
+			}
+			
+		});
+		{
+	}
+	}
 }
+

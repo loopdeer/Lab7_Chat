@@ -37,12 +37,22 @@ public class ChatServer extends Observable {
 		while (true) {
 			Socket clientSocket = serverSock.accept();
 			String userName = getUserName(clientSocket);
-			onlineUsers.add(userName);
 			ClientObserver writer = new ClientObserver(clientSocket.getOutputStream());
-			Thread t = new Thread(new ClientHandler(clientSocket, userName, writer));
-			t.start();
-			this.addObserver(writer);
-			System.out.println("got a connection with " + userName);
+			if(!onlineUsers.contains(userName))
+			{
+				onlineUsers.add(userName);
+				writer.println(SERVERNAME + " userFree");
+				writer.flush();
+				Thread t = new Thread(new ClientHandler(clientSocket, userName, writer));
+				t.start();
+				this.addObserver(writer);
+				System.out.println("got a connection with " + userName);
+			}
+			else
+			{
+				writer.println(SERVERNAME + " userTaken");
+				writer.flush();
+			}
 		}
 	}
 	private String getUserName(Socket clientSocket) {
@@ -115,7 +125,22 @@ public class ChatServer extends Observable {
 		System.out.println(id + " has disconnected.");
 		this.deleteObserver(o);
 		System.out.println("# of observers: " + this.countObservers());
+		onlineUsers.remove(id);
+		getOnlineUsers();
+	}
+	
+	private void getOnlineUsers()
+	{
+		String specialMessage;
+		Collections.sort(onlineUsers);
+		specialMessage = onlineUsers.toString();
+		specialMessage = specialMessage.replace("[", "");
+		specialMessage = specialMessage.replaceAll(",", "");
+		specialMessage = specialMessage.replace("]", "");
+		specialMessage = SERVERNAME + " " + ALLNAME + " onlineUsers " + specialMessage; 
 		
+		setChanged();
+		notifyObservers(specialMessage);
 	}
 	
 	class ClientHandler implements Runnable {
@@ -196,15 +221,7 @@ public class ChatServer extends Observable {
 					
 					break;
 				case "getOnlineUsers" :
-					Collections.sort(onlineUsers);
-					specialMessage = onlineUsers.toString();
-					specialMessage = specialMessage.replace("[", "");
-					specialMessage = specialMessage.replaceAll(",", "");
-					specialMessage = specialMessage.replace("]", "");
-					specialMessage = SERVERNAME + " " + ALLNAME + " onlineUsers " + specialMessage; 
-					
-					setChanged();
-					notifyObservers(specialMessage);
+					getOnlineUsers();
 					break;
 				default: System.out.println("invalid command");
 				}
@@ -213,6 +230,8 @@ public class ChatServer extends Observable {
 			
 			return false;
 		}
+		
+		
 		
 		
 	}

@@ -10,6 +10,7 @@ import javax.swing.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -22,6 +23,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 
 
@@ -33,7 +35,8 @@ public class ChatClient extends Application {
 	private static PrintWriter writer;
 	private static ClientMainController cc;
 	private String userID;
-	private LoginScreenController lsc;
+	private static LoginScreenController lsc;
+	//private boolean loggedIn = false;
 	public static final String COMMANDSTART = "*/";
 	
 	//private String groupIdentity;
@@ -47,8 +50,35 @@ public class ChatClient extends Application {
 		return setUpNetworking(user);
 		
 	}
+	
+	private boolean checkUserName(String m)
+	{
+		if(m == null)
+			return false;
+		Scanner commandChecker = new Scanner(m);
+		if(commandChecker.hasNext())
+		{
+			String sender = commandChecker.next();
+			if(sender.equals(ChatServer.SERVERNAME))
+			{
+				String command = commandChecker.next();
+					if(command.equals("userTaken"))
+					{
+						lsc.userTaken();
+						return false;
+					}
+					else if(command.equals("userFree"))
+					{
+						return true;
+					}
+			}
+		}
+		return false;
+	}
 
 	private PrintWriter setUpNetworking(String user) throws Exception {
+		String message;
+		
 		@SuppressWarnings("resource")
 		Socket sock = new Socket("127.0.0.1", 4242);
 		InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
@@ -81,9 +111,14 @@ public class ChatClient extends Application {
 		writer.println(COMMANDSTART + " initializeID " + userID);
 		//System.out.println(writer);
 		writer.flush();
-		System.out.println("networking established");
+		while(((message = reader.readLine()) == null));
+		
+		if(!checkUserName(message))
+			return null;
 		Thread readerThread = new Thread(new IncomingReader());
 		readerThread.start();
+		System.out.println("networking established");
+		
 		return writer;
 	}
 	
@@ -153,6 +188,9 @@ public class ChatClient extends Application {
 			}
 			
 		}
+		
+		
+		
 	}
 
 	@Override
@@ -171,6 +209,14 @@ public class ChatClient extends Application {
             e.printStackTrace();
         }
 		//setUpNetworking();
+		
+		primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+		    @Override
+		    public void handle(WindowEvent t) {
+		        Platform.exit();
+		        System.exit(0);
+		    }
+		});
 	}
 	
 	public void setCC(ClientMainController c)
