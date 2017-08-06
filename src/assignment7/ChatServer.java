@@ -25,6 +25,7 @@ public class ChatServer extends Observable {
 	public static void main(String[] args) {
 		try {
 			new ChatServer().setUpNetworking();
+			LoginScreenController.users = new HashSet<String>();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
