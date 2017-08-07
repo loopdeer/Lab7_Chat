@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -87,9 +88,9 @@ public class LoginScreenController {
 					@Override
 					public void run() {
 						// TODO Auto-generated method stub
-						TabPane rootLayout;
+						SplitPane rootLayout;
 						try {
-							rootLayout = (TabPane) loader.load();
+							rootLayout = (SplitPane) loader.load();
 							Scene scene = new Scene(rootLayout);
 							st.setScene(scene);
 							cc.initalizeUserList();
