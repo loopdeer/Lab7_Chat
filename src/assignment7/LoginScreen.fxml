@@ -10,7 +10,7 @@
   <content>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
          <children>
-            <Label fx:id="ipLabel" layoutX="174.0" layoutY="107.0" text="Please enter your IP Address" />
+            <Label fx:id="ipLabel" layoutX="156.0" layoutY="108.0" text="Please enter the server's IP Address" />
             <Button fx:id="enterButton" layoutX="227.0" layoutY="227.0" mnemonicParsing="false" onAction="#createUser" text="Enter" />
             <Label fx:id="welcomeLabel" layoutX="177.0" layoutY="14.0" text="Welcome to the chat client!" />
             <Label fx:id="userLabel" layoutX="186.0" layoutY="51.0" text="Please enter a username" />

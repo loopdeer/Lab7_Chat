@@ -107,7 +107,7 @@ public class ClientMainController {
 		Scanner commandChecker = new Scanner(mainTextField.getText());
 		if(commandChecker.next().equals(ChatClient.COMMANDSTART))
 		{
-			mainArea.appendText("Do not start messages with " + ChatClient.COMMANDSTART + "\n");
+			addTextTextFlow(viewTextFlow, "Do not start messages with " + ChatClient.COMMANDSTART + "\n", scrollText, null, null);
 			return;
 		}
 		
