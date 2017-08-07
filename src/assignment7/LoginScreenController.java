@@ -142,9 +142,9 @@ public class LoginScreenController {
 						@Override
 						public void run() {
 							// TODO Auto-generated method stub
-							TabPane rootLayout;
+							SplitPane rootLayout;
 							try {
-								rootLayout = (TabPane) loader.load();
+								rootLayout = (SplitPane) loader.load();
 								Scene scene = new Scene(rootLayout);
 								st.setScene(scene);
 								cc.initalizeUserList();
@@ -183,52 +183,8 @@ public class LoginScreenController {
 				}
             	
             });
-<<<<<<< HEAD
-		}*/
-			//users.add(username);
-			un = username;
-			ChatClient test = new ChatClient();
-			try {
-				writer = test.run(un);
-				if(writer != null)
-				{
-				//System.out.println(writer);
-				FXMLLoader loader = new FXMLLoader();
-	            loader.setLocation(ClientMain.class.getResource("ClientMain.fxml"));
-	            cc = new ClientMainController(writer);
-	            loader.setController(cc);
-	            incoming = cc.getTA();
-	            
-	            // Show the scene containing the root layout.
-	           
-	            Platform.runLater(new Runnable() {
 
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						SplitPane rootLayout;
-						try {
-							rootLayout = (SplitPane) loader.load();
-							Scene scene = new Scene(rootLayout);
-							st.setScene(scene);
-							cc.initalizeUserList();
-				            test.setCC(cc);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						
-					}
-	            	
-	            });
-				}
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-=======
-		}
->>>>>>> refs/remotes/origin/master
+	}
 	}
 	
 	public String getUser() {
