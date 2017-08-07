@@ -125,7 +125,7 @@ public class LoginScreenController {
 				un = username;
 				ChatClient test = new ChatClient();
 				try {
-					writer = test.run(un);
+					writer = test.run(un, ip, port);
 					if(writer != null)
 					{
 					//System.out.println(writer);

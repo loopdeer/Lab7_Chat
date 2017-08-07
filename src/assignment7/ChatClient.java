@@ -46,8 +46,8 @@ public class ChatClient extends Application {
 	
 	private TabPane rootLayout;
 	
-	public PrintWriter run(String user) throws Exception {
-		return setUpNetworking(user);
+	public PrintWriter run(String user, String ip, int port) throws Exception {
+		return setUpNetworking(user, ip, port);
 		
 	}
 	
@@ -76,11 +76,11 @@ public class ChatClient extends Application {
 		return false;
 	}
 
-	private PrintWriter setUpNetworking(String user) throws Exception {
+	private PrintWriter setUpNetworking(String user, String ip, int port) throws Exception {
 		String message;
 		
 		@SuppressWarnings("resource")
-		Socket sock = new Socket("127.0.0.1", 4242);
+		Socket sock = new Socket(ip, port);
 		InputStreamReader streamReader = new InputStreamReader(sock.getInputStream());
 		reader = new BufferedReader(streamReader);
 		writer = new PrintWriter(sock.getOutputStream());
