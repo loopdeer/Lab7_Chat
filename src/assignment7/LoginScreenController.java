@@ -59,7 +59,7 @@ public class LoginScreenController {
 			String ip = ipField.getText();
 			int port = Integer.parseInt(portField.getText());
 			
-			if (username.equals("") || username.contains(",") || username.indexOf("*") == 0) {
+			if (username.equals("") || username.contains(",") || username.indexOf("*") == 0 || username.contains(" ")) {
 				Stage stage = new Stage();
 				FXMLLoader ldr = new FXMLLoader();
 	            ldr.setLocation(ClientMain.class.getResource("Error.fxml"));
