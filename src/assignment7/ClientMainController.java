@@ -2,18 +2,32 @@ package assignment7;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Queue;
 import java.util.Scanner;
+
+import com.uz.emojione.Emoji;
+import com.uz.emojione.EmojiOne;
+import com.uz.emojione.fx.ImageCache;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -26,7 +40,7 @@ public class ClientMainController {
 	//@FXML
 	//private TextArea viewArea;
 	@FXML
-	private TextFlow viewTextFlow;
+	private VBox viewTextFlow;
 	@FXML
 	private TextField messageBox;
 	@FXML
@@ -51,7 +65,12 @@ public class ClientMainController {
 	private Tab onlineTab;
 	@FXML
 	private ScrollPane scrollText;
-	
+
+	@FXML
+	void initialize()
+	{
+		scrollText.vvalueProperty().bind(viewTextFlow.heightProperty());
+	}
 	private String groupName;
 	private boolean inGroup;
 	private TextArea mainArea;
@@ -61,7 +80,7 @@ public class ClientMainController {
 	private String currentSelected;
 	private boolean firstRun = true;
 	
-	private TextFlow mainTextFlow;
+	private VBox mainTextFlow;
 	public ClientMainController(PrintWriter w)
 	{
 		writer = w;
@@ -143,7 +162,7 @@ public class ClientMainController {
 		return mainArea;
 	}
 	
-	public TextFlow getTextFlow()
+	public VBox getTextFlow()
 	{
 		return viewTextFlow;
 	}
@@ -217,13 +236,13 @@ public class ClientMainController {
 		if(recip.equals(ChatServer.ALLNAME))
 		{
 			//viewTextFlow.appendText(sender + ":" + message + "\n");
-			addTextTextFlow(viewTextFlow, sender + ":" + message + "\n", scrollText);
+			addTextTextFlow(viewTextFlow, message + "\n", scrollText, sender, recip);
 			
 		}
 		else if(chats.containsKey(recip))
 		{
 			ChatTabController tc = chats.get(recip);
-			addTextTextFlow(tc.getTF(), sender + ":" + message + "\n", tc.getSP());
+			addTextTextFlow(tc.getTF(), message + "\n", tc.getSP(), sender, recip);
 		}
 	}
 	
@@ -253,30 +272,87 @@ public class ClientMainController {
 		});
 	}
 	
-	public void addTextTextFlow(TextFlow t, String m, ScrollPane s)
-	{
-		String temp = m.replaceAll(":\\)", "U+1F601");
+	public void addTextTextFlow(VBox t, String m, ScrollPane s, String sender, String recip)
+	{	
 		Platform.runLater(new Runnable(){
-			
 
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				t.getChildren().add(new Text(temp));
-				s.setVvalue(1.0);
+				TextFlow tempTF = new TextFlow();
+				if(sender == null)
+				{
+					tempTF.getChildren().add(new Text(m));
+					//s.setVvalue(1.0);
+					return;
+				}
+				Text tempSend = new Text(sender + ": ");
+	
+				tempTF.getChildren().add(tempSend);
+				Queue<Object> obs = EmojiOne.getInstance().toEmojiAndText(m);
+				while(!obs.isEmpty()) {
+					Object ob = obs.poll();
+					if(ob instanceof String) {
+						Text temp = new Text((String) ob);
+						temp.setTextAlignment(TextAlignment.RIGHT);
+						tempTF.getChildren().add(new Text((String)ob));
+					}
+					else if(ob instanceof Emoji) {
+						Emoji emoji = (Emoji) ob;
+						tempTF.getChildren().add(createEmojiNode(emoji));
+					}
+				}
+				//s.setVvalue(s.getVmax());
+				if(sender.equals(ChatClient.getID()))
+					tempTF.setTextAlignment(TextAlignment.RIGHT);
+				else
+					tempTF.setTextAlignment(TextAlignment.LEFT);
+				
+				t.getChildren().add(tempTF);
 			}
 			
 		});
 	}
 	
-	public void setMainTextFlow(TextFlow t)
+	public void setMainTextFlow(VBox viewTextFlow2)
 	{
-		mainTextFlow = t;
+		mainTextFlow = viewTextFlow2;
 	}
 	
 	public ScrollPane getSP()
 	{
 		return scrollText;
+	}
+	
+	private Node createEmojiNode(Emoji emoji) {
+		StackPane stackPane = new StackPane();
+		stackPane.setPadding(new Insets(3));
+		ImageView imageView = new ImageView();
+		imageView.setFitWidth(25);
+		imageView.setFitHeight(25);
+		imageView.setImage(ImageCache.getInstance().getImage(getEmojiImagePath(emoji.getHex())));
+		stackPane.getChildren().add(imageView);
+
+		Tooltip tooltip = new Tooltip(emoji.getShortname());
+		Tooltip.install(stackPane, tooltip);
+		stackPane.setCursor(Cursor.HAND);
+		stackPane.setOnMouseEntered(e-> {
+			stackPane.setStyle("-fx-background-color: #a6a6a6; -fx-background-radius: 3;");
+		});
+		stackPane.setOnMouseExited(e-> {
+			stackPane.setStyle("");
+		});
+		return stackPane;
+	}
+
+	private String getEmojiImagePath(String hexStr) {
+		return ImageCache.class.getResource("png_40/" + hexStr + ".png").toExternalForm();
+	}
+	
+	private void addText(String text) {
+		Text textNode = new Text(text);
+		//textNode.setFont(Font.font(32));
+		viewTextFlow.getChildren().add(textNode);
 	}
 	
 }

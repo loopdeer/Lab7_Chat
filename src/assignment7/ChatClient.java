@@ -34,7 +34,7 @@ public class ChatClient extends Application {
 	private BufferedReader reader;
 	private static PrintWriter writer;
 	private static ClientMainController cc;
-	private String userID;
+	private static String userID;
 	private static LoginScreenController lsc;
 	//private boolean loggedIn = false;
 	public static final String COMMANDSTART = "*/";
@@ -170,7 +170,7 @@ public class ChatClient extends Application {
 							String groupIdentity = commandChecker.nextLine();
 							groupIdentity = groupIdentity.replaceAll(" ", "");
 							//cc.getTA().appendText("New conversation group request for: " + groupIdentity + "\n");
-							cc.addTextTextFlow(cc.getTextFlow(), "New conversation group request for: " + groupIdentity + "\n", cc.getSP());
+							cc.addTextTextFlow(cc.getTextFlow(), "New conversation group request for: " + groupIdentity + "\n", cc.getSP(), null, null);
 							cc.setGroup(groupIdentity);
 							break;
 						case "onlineUsers" :
@@ -178,7 +178,7 @@ public class ChatClient extends Application {
 							cc.updateOnlineTab(ul);
 							break;
 							
-						default : cc.addTextTextFlow(cc.getTextFlow(), "The server wanted to tell you something...but it screwed up." + "\n", cc.getSP());
+						default : cc.addTextTextFlow(cc.getTextFlow(), "The server wanted to tell you something...but it screwed up." + "\n", cc.getSP(), null, null);
 						}
 					}
 					return;
@@ -224,5 +224,10 @@ public class ChatClient extends Application {
 	public void setCC(ClientMainController c)
 	{
 		cc = c;
+	}
+	
+	public static String getID()
+	{
+		return userID;
 	}
 }

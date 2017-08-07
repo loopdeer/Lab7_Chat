@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.TextFlow;
 
 import java.io.PrintWriter;
@@ -32,7 +33,7 @@ public class ChatTabController {
 	@FXML
 	private Button addressButton;
 	@FXML
-	private TextFlow viewTextFlow;
+	private VBox viewTextFlow;
 	@FXML
 	private ScrollPane scrollText;
 	
@@ -63,13 +64,13 @@ public class ChatTabController {
 		Scanner commandChecker = new Scanner(messageBox.getText());
 		if(commandChecker.next().equals(ChatClient.COMMANDSTART))
 		{
-			cc.addTextTextFlow(viewTextFlow, "Do not start messages with " + ChatClient.COMMANDSTART, scrollText);
+			cc.addTextTextFlow(viewTextFlow, "Do not start messages with " + ChatClient.COMMANDSTART, scrollText, null, null);
 			//view.appendText("Do not start messages with " + ChatClient.COMMANDSTART + "\n");
 			return;
 		}
 		
 			if(groupName == null)
-				cc.addTextTextFlow(viewTextFlow, "Please specify people to talk to.", scrollText);
+				cc.addTextTextFlow(viewTextFlow, "Please specify people to talk to.", scrollText, null, null);
 			else
 			{
 			writer.println(groupName + " " + messageBox.getText());
@@ -100,7 +101,7 @@ public class ChatTabController {
 		return viewArea;
 	}*/
 	
-	public TextFlow getTF()
+	public VBox getTF()
 	{
 		return viewTextFlow;
 	}
