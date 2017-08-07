@@ -22,4 +22,8 @@ public class ErrorController {
 	public void closeWindow(ActionEvent event) {
 		stage.close();
 	}
+	
+	public Label getLabel() {
+		return errorLabel;
+	}
 }

@@ -28,6 +28,14 @@ public class LoginScreenController {
 	private Label welcomeLabel;
 	@FXML
 	private Label userLabel;
+	@FXML
+	private Label ipLabel;
+	@FXML
+	private Label portLabel;
+	@FXML
+	private TextField ipField;
+	@FXML
+	private TextField portField;
 	
 	public static Set<String> users;
 	private String un;
@@ -46,12 +54,120 @@ public class LoginScreenController {
 	
 	@FXML
 	public void createUser(ActionEvent event) throws IOException {
-		String username = userField.getText();
-		/*if (users.contains(username)) {
+		try {
+			String username = userField.getText();
+			String ip = ipField.getText();
+			int port = Integer.parseInt(portField.getText());
+			
+			if (username.equals("")) {
+				Stage stage = new Stage();
+				FXMLLoader ldr = new FXMLLoader();
+	            ldr.setLocation(ClientMain.class.getResource("Error.fxml"));
+	            ErrorController ec = new ErrorController(stage);
+	            ldr.setController(ec);
+	            TitledPane tp = (TitledPane) ldr.load();
+	            Scene error = new Scene(tp);
+	            Platform.runLater(new Runnable() {
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						stage.setScene(error);
+						ec.getLabel().setText("Please enter a username!");
+						stage.show();
+					}
+	            	
+	            });
+			}
+			
+			else if (ip.equals("")) {
+				Stage stage = new Stage();
+				FXMLLoader ldr = new FXMLLoader();
+	            ldr.setLocation(ClientMain.class.getResource("Error.fxml"));
+	            ErrorController ec = new ErrorController(stage);
+	            ldr.setController(ec);
+	            TitledPane tp = (TitledPane) ldr.load();
+	            Scene error = new Scene(tp);
+	            Platform.runLater(new Runnable() {
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						stage.setScene(error);
+						ec.getLabel().setText("Please enter an IP Address!");
+						stage.show();
+					}
+	            	
+	            });
+			}
+			
+			else if (port >= 0 && port <= 1023) {
+				Stage stage = new Stage();
+				FXMLLoader ldr = new FXMLLoader();
+	            ldr.setLocation(ClientMain.class.getResource("Error.fxml"));
+	            ErrorController ec = new ErrorController(stage);
+	            ldr.setController(ec);
+	            TitledPane tp = (TitledPane) ldr.load();
+	            Scene error = new Scene(tp);
+	            Platform.runLater(new Runnable() {
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						stage.setScene(error);
+						ec.getLabel().setText("Please enter an unreserved port!");
+						stage.show();
+					}
+	            	
+	            });
+			}
+			else {
+				un = username;
+				ChatClient test = new ChatClient();
+				try {
+					writer = test.run(un);
+					if(writer != null)
+					{
+					//System.out.println(writer);
+					FXMLLoader loader = new FXMLLoader();
+		            loader.setLocation(ClientMain.class.getResource("ClientMain.fxml"));
+		            cc = new ClientMainController(writer);
+		            loader.setController(cc);
+		            incoming = cc.getTA();
+		            
+		            // Show the scene containing the root layout.
+		           
+		            Platform.runLater(new Runnable() {
+	
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							TabPane rootLayout;
+							try {
+								rootLayout = (TabPane) loader.load();
+								Scene scene = new Scene(rootLayout);
+								st.setScene(scene);
+								cc.initalizeUserList();
+					            test.setCC(cc);
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							
+						}
+		            	
+		            });
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		catch (NumberFormatException e) {
 			Stage stage = new Stage();
 			FXMLLoader ldr = new FXMLLoader();
             ldr.setLocation(ClientMain.class.getResource("Error.fxml"));
-            //LoginScreenController lsc = new LoginScreenController();
             ErrorController ec = new ErrorController(stage);
             ldr.setController(ec);
             TitledPane tp = (TitledPane) ldr.load();
@@ -62,10 +178,12 @@ public class LoginScreenController {
 				public void run() {
 					// TODO Auto-generated method stub
 					stage.setScene(error);
+					ec.getLabel().setText("Please enter a port!");
 					stage.show();
 				}
             	
             });
+<<<<<<< HEAD
 		}*/
 			//users.add(username);
 			un = username;
@@ -108,6 +226,9 @@ public class LoginScreenController {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+=======
+		}
+>>>>>>> refs/remotes/origin/master
 	}
 	
 	public String getUser() {
