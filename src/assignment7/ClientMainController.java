@@ -6,12 +6,15 @@ import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -19,17 +22,25 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Scanner;
 
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import com.uz.emojione.Emoji;
 import com.uz.emojione.EmojiOne;
 import com.uz.emojione.fx.ImageCache;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 
 import javafx.scene.control.TextArea;
@@ -65,11 +76,42 @@ public class ClientMainController {
 	private Tab onlineTab;
 	@FXML
 	private ScrollPane scrollText;
-
+	@FXML
+	private TextField emojiText;
+	@FXML
+	private TextFlow emojiSearchFlow;
+	@FXML
+	private AnchorPane emojiPane;
+	@FXML
+	private SplitPane mainSplit;
+	@FXML
+	private ChoiceBox emojiCategory;
+	
 	@FXML
 	void initialize()
 	{
 		scrollText.vvalueProperty().bind(viewTextFlow.heightProperty());
+		mainSplit.getItems().remove(emojiPane);
+		emojiCategory.getItems().addAll(EmojiOne.getInstance().getCategories());
+		emojiCategory.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){
+
+			
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				// TODO Auto-generated method stub
+				emojiSearch(categories.get(newValue.intValue()));
+			}
+			});
+		
+		emojiText.textProperty().addListener(new ChangeListener<String>(){
+
+			@Override
+			public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
+				// TODO Auto-generated method stub
+				emojiSearch(categories.get(emojiCategory.getSelectionModel().getSelectedIndex()));
+			}
+			
+		});
 	}
 	private String groupName;
 	private boolean inGroup;
@@ -79,8 +121,10 @@ public class ClientMainController {
 	private HashMap<String, ChatTabController> chats = new HashMap<String, ChatTabController>();
 	private String currentSelected;
 	private boolean firstRun = true;
-	
+	private List<String> categories;
 	private VBox mainTextFlow;
+	private Map<String, List<Emoji>> allEmojis;
+	
 	public ClientMainController(PrintWriter w)
 	{
 		writer = w;
@@ -89,7 +133,24 @@ public class ClientMainController {
 		inGroup = false;
 		currentSelected = "*DEFAULT*";
 		//chats.put("*DEFAULT*", startTab);
+		categories = EmojiOne.getInstance().getCategories();
+		allEmojis = EmojiOne.getInstance().getCategorizedEmojis(0);
 	}
+	
+	@FXML
+	public void openEmojis(Event event)
+	{
+		
+		if(mainSplit.getItems().indexOf(emojiPane) == -1)
+		{
+			mainSplit.getItems().add(emojiPane);
+			
+			mainSplit.setDividerPosition(0, 0.75); 
+		}
+		else
+			mainSplit.getItems().remove(emojiPane);
+	}
+	
 	// Event Listener on Tab.onSelectionChanged
 	@FXML
 	public void allSelected(Event event) {
@@ -309,6 +370,9 @@ public class ClientMainController {
 					tempTF.setTextAlignment(TextAlignment.LEFT);
 				
 				t.getChildren().add(tempTF);
+				Media sound = new Media(new File("beep_short_on.wav").toURI().toString());
+				MediaPlayer play = new MediaPlayer(sound);
+				play.play();
 			}
 			
 		});
@@ -355,4 +419,39 @@ public class ClientMainController {
 		viewTextFlow.getChildren().add(textNode);
 	}
 	
+	private void emojiSearch(String category)
+	{
+		if(category.equals(null))
+			return;
+		HashSet<Emoji> search = new HashSet<Emoji>(EmojiOne.getInstance().search(emojiText.getText()));
+		emojiSearchFlow.getChildren().clear();
+		Platform.runLater(new Runnable(){
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				for(Emoji em : allEmojis.get(category))
+				{
+					if(emojiOverlap(search, em))
+					{
+						Node temp = createEmojiNode(em);
+						temp.setOnMouseClicked(e -> {
+							mainTextField.appendText(em.getShortname());
+						});
+						emojiSearchFlow.getChildren().add(temp);
+					}
+				}
+			}
+			
+		});
+	}
+	
+	private boolean emojiOverlap(HashSet<Emoji> li, Emoji e)
+	{
+		for(Emoji em : li)
+		{
+			if(em.getShortname().equals(e.getShortname()))
+				return true;
+		}
+		return false;
+	}
 }
