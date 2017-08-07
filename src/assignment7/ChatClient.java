@@ -169,14 +169,16 @@ public class ChatClient extends Application {
 						case "notifyNewGroup" : 
 							String groupIdentity = commandChecker.nextLine();
 							groupIdentity = groupIdentity.replaceAll(" ", "");
-							cc.getTA().appendText("New conversation group request for: " + groupIdentity + "\n");
+							//cc.getTA().appendText("New conversation group request for: " + groupIdentity + "\n");
+							cc.addTextTextFlow(cc.getTextFlow(), "New conversation group request for: " + groupIdentity + "\n", cc.getSP());
 							cc.setGroup(groupIdentity);
 							break;
 						case "onlineUsers" :
 							String ul = commandChecker.nextLine();
 							cc.updateOnlineTab(ul);
 							break;
-						default : cc.getTA().appendText("The server wanted to tell you something...but it screwed up." + "\n");
+							
+						default : cc.addTextTextFlow(cc.getTextFlow(), "The server wanted to tell you something...but it screwed up." + "\n", cc.getSP());
 						}
 					}
 					return;
