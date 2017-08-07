@@ -59,7 +59,7 @@ public class LoginScreenController {
 			String ip = ipField.getText();
 			int port = Integer.parseInt(portField.getText());
 			
-			if (username.equals("")) {
+			if (username.equals("") || username.contains(",") || username.indexOf("*") == 0) {
 				Stage stage = new Stage();
 				FXMLLoader ldr = new FXMLLoader();
 	            ldr.setLocation(ClientMain.class.getResource("Error.fxml"));
@@ -73,7 +73,7 @@ public class LoginScreenController {
 					public void run() {
 						// TODO Auto-generated method stub
 						stage.setScene(error);
-						ec.getLabel().setText("Please enter a username!");
+						ec.getLabel().setText("Please enter a valid username!");
 						stage.show();
 					}
 	            	
@@ -123,7 +123,7 @@ public class LoginScreenController {
 			}
 			else {
 				un = username;
-				ChatClient test = new ChatClient();
+				ClientMain test = new ClientMain();
 				try {
 					writer = test.run(un, ip, port);
 					if(writer != null)

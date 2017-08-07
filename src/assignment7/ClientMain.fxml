@@ -19,11 +19,17 @@
                               <VBox fx:id="viewTextFlow" />
                            </content>
                         </ScrollPane>
-                        <TextField fx:id="messageBox" layoutX="64.0" layoutY="406.0" style="-fx-font-family: NotoColorEmoji; -fx-font-size: 15;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="64.0" AnchorPane.rightAnchor="106.0" />
+                        <TextField fx:id="messageBox" layoutX="55.0" layoutY="406.0" prefHeight="31.0" prefWidth="447.0" style="-fx-font-family: NotoColorEmoji; -fx-font-size: 15;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="55.0" AnchorPane.rightAnchor="106.0">
+                           <tooltip>
+                              <Tooltip text="Type in messages here. Do not start messasges with */." />
+                           </tooltip></TextField>
                         <Button fx:id="sendButton" layoutX="499.0" layoutY="406.0" mnemonicParsing="false" onAction="#sendMessage" prefWidth="106.0" text="Send" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                        <TextField fx:id="addressBox" layoutX="1.0" layoutY="-1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="106.0" AnchorPane.topAnchor="0.0" />
-                        <Button fx:id="addressButton" layoutX="493.0" layoutY="-1.0" mnemonicParsing="false" onAction="#talkTo" prefHeight="31.0" prefWidth="106.0" text="To" AnchorPane.rightAnchor="0.0" />
-                        <Button layoutY="507.0" mnemonicParsing="false" onAction="#openEmojis" text="Button" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
+                        <TextField fx:id="addressBox" layoutX="1.0" layoutY="-1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="106.0" AnchorPane.topAnchor="0.0">
+                           <tooltip>
+                              <Tooltip text="Type in the name of users you want to talk to privately. Syntax: &lt;name&gt; &lt;name&gt;" />
+                           </tooltip></TextField>
+                        <Button fx:id="addressButton" layoutX="493.0" layoutY="-1.0" mnemonicParsing="false" onAction="#talkTo" prefHeight="31.0" prefWidth="106.0" text="Make Group" AnchorPane.rightAnchor="0.0" />
+                        <Button layoutY="507.0" mnemonicParsing="false" onAction="#openEmojis" text="Emoji" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
                      </children>
                   </AnchorPane>
             </content>
@@ -36,18 +42,30 @@
                      </children>
                   </AnchorPane>
               </content>
+               <tooltip>
+                  <Tooltip text="Look at currently online users here." />
+               </tooltip>
             </Tab>
         </tabs>
       </TabPane>
       <AnchorPane fx:id="emojiPane" SplitPane.resizableWithParent="false">
          <children>
-            <TextField fx:id="emojiText" maxHeight="31.0" prefHeight="31.0" prefWidth="82.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="110.0" AnchorPane.topAnchor="0.0" />
+            <TextField fx:id="emojiText" maxHeight="31.0" prefHeight="31.0" prefWidth="82.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="110.0" AnchorPane.topAnchor="0.0">
+               <tooltip>
+                  <Tooltip text="Type in an emoji to search. Alternatively select a category with the drop down menu." />
+               </tooltip></TextField>
             <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="31.0">
                <content>
                   <TextFlow fx:id="emojiSearchFlow" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" />
                </content>
+               <tooltip>
+                  <Tooltip text="Select an emoji. Clicking it will input the shortcode for it in the send field." />
+               </tooltip>
             </ScrollPane>
-            <ChoiceBox fx:id="emojiCategory" layoutX="109.0" prefHeight="31.0" prefWidth="116.0" AnchorPane.rightAnchor="0.0" />
+            <ChoiceBox fx:id="emojiCategory" layoutX="109.0" prefHeight="31.0" prefWidth="116.0" AnchorPane.rightAnchor="0.0">
+               <tooltip>
+                  <Tooltip text="Select emoji category." />
+               </tooltip></ChoiceBox>
          </children>
       </AnchorPane>
    </items>
